@@ -1,0 +1,47 @@
+piVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: net6api-dev
+  name: net6api-dev
+  namespace: testk8s
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: net6api-dev
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: net6api-dev
+    spec:
+      containers:
+      - image: hcobian/test:latest
+        name: test
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /swagger/index.html
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+          periodSeconds: 10
+          failureThreshold: 1
+        readinessProbe:
+          httpGet: 
+            path: /swagger/index.html
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 1
+        envFrom:
+          - configMapRef:
+              name: configmap-api
+          - secretRef:
+              name: secrets-api
+status: {}
